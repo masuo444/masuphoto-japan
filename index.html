@@ -28,20 +28,24 @@
             <p class="book-year">2022 / FIRST PHOTO BOOK</p>
         </section>
 
-        <section class="book-viewer desktop-only" id="book-viewer">
-            <div class="book-shell">
+        <section class="book-viewer" id="book-viewer">
+            <div class="book-shell desktop-only">
                 <div class="book-spine"></div>
                 <div class="book-page book-page-left">
-                    <img src="1.jpg" alt="MASU PHOTO Japan 01" loading="eager" decoding="async" fetchpriority="high">
+                    <img src="1.jpg" alt="MASU PHOTO Japan 01" loading="lazy" decoding="async">
                 </div>
                 <div class="book-page book-page-right">
-                    <img src="2.jpg" alt="MASU PHOTO Japan 02" loading="eager" decoding="async">
+                    <img src="2.jpg" alt="MASU PHOTO Japan 02" loading="lazy" decoding="async">
                 </div>
                 <button class="book-nav prev" type="button" aria-label="前のページ">‹</button>
                 <button class="book-nav next" type="button" aria-label="次のページ">›</button>
                 <div class="book-page-indicator">
                     <span data-book-current>1–2</span>
                 </div>
+            </div>
+            <div class="mobile-gallery mobile-only" aria-label="Japan photo book">
+                <p class="mobile-gallery-lead">モバイルではスクロールで全ページをご覧いただけます。</p>
+                <div class="book-mobile-grid" data-mobile-grid></div>
             </div>
             <div class="viewer-pages" data-viewer-pages>
                 <span data-src="1.jpg" data-alt="MASU PHOTO Japan 1"></span>

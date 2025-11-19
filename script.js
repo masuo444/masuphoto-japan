@@ -2,10 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const sharedPages = collectPageData(document.querySelector("[data-viewer-pages]"));
 
     initScrollReveal();
-    initPassGate();
-    initMenu();
-    initBookGallery(sharedPages);
     initBookViewer(sharedPages);
+    initBookGallery(sharedPages);
 });
 
 function collectPageData(root) {
@@ -48,45 +46,6 @@ function initScrollReveal() {
     } else {
         targets.forEach(target => target.classList.add("in-view"));
     }
-}
-
-function initPassGate() {
-    const toggleBtn = document.querySelector("[data-pass-toggle]");
-    const submitBtn = document.querySelector("[data-pass-submit]");
-    const panel = document.querySelector(".pass-panel");
-    const input = document.querySelector("#gallery-pass");
-    const feedback = document.querySelector(".pass-feedback");
-    const secret = document.querySelector("[data-secret-gallery]");
-    if (!toggleBtn || !submitBtn || !panel || !input || !feedback) return;
-
-    const PASS_CODE = "MASU10";
-
-    toggleBtn.addEventListener("click", () => {
-        panel.classList.toggle("visible");
-        panel.setAttribute("aria-hidden", panel.classList.contains("visible") ? "false" : "true");
-        if (panel.classList.contains("visible")) {
-            input.focus();
-        } else {
-            input.value = "";
-            feedback.textContent = "";
-        }
-    });
-
-    submitBtn.addEventListener("click", () => {
-        const value = input.value.trim().toUpperCase();
-        if (!value) return;
-        if (value === PASS_CODE) {
-            feedback.textContent = "Access granted. We will guide you quietly.";
-            feedback.style.color = "var(--gold)";
-            if (secret) {
-                secret.classList.add("open");
-            }
-        } else {
-            feedback.textContent = "Invalid pass. Please check your 10€ pass.";
-            feedback.style.color = "#f17373";
-        }
-        input.value = "";
-    });
 }
 
 function initBookGallery(sharedPages = []) {
@@ -163,6 +122,7 @@ function initBookViewer(sharedPages = []) {
         const rightPage = section.querySelector(".book-page-right");
         const prevBtn = section.querySelector(".book-nav.prev");
         const nextBtn = section.querySelector(".book-nav.next");
+        const mobileGrid = section.querySelector("[data-mobile-grid]");
         if (!pagesRoot || !leftImg || !rightImg || !rightPage || !prevBtn || !nextBtn) return;
 
         const indicator = section.querySelector("[data-book-current]");
@@ -171,6 +131,43 @@ function initBookViewer(sharedPages = []) {
 
         const pages = sharedPages.length ? sharedPages : collectPageData(pagesRoot);
         if (!pages.length) return;
+
+        const mobileMedia = typeof window.matchMedia === "function" ? window.matchMedia("(max-width: 900px)") : null;
+        let mobileGridPopulated = false;
+
+        const populateMobileGrid = () => {
+            if (!mobileGrid || mobileGridPopulated) return;
+            const fragment = document.createDocumentFragment();
+            pages.forEach((page, idx) => {
+                const img = document.createElement("img");
+                img.src = page.src;
+                img.alt = page.alt || `MASU PHOTO Japan ${idx + 1}`;
+                img.loading = "lazy";
+                fragment.appendChild(img);
+            });
+            mobileGrid.appendChild(fragment);
+            mobileGridPopulated = true;
+        };
+
+        const handleMobileChange = event => {
+            if (event.matches) {
+                populateMobileGrid();
+            }
+        };
+
+        if (!mobileMedia) {
+            populateMobileGrid();
+        } else if (mobileMedia.matches) {
+            populateMobileGrid();
+        }
+
+        if (mobileGrid && mobileMedia) {
+            if (typeof mobileMedia.addEventListener === "function") {
+                mobileMedia.addEventListener("change", handleMobileChange);
+            } else if (typeof mobileMedia.addListener === "function") {
+                mobileMedia.addListener(handleMobileChange);
+            }
+        }
 
         const initThumbs = () => {
             if (!thumbsRoot) return [];
@@ -312,26 +309,5 @@ function initBookViewer(sharedPages = []) {
         });
 
         render();
-    });
-}
-
-function initMenu() {
-    const toggle = document.querySelector(".menu-toggle");
-    const nav = document.querySelector(".site-header nav");
-    if (!toggle || !nav) return;
-
-    toggle.addEventListener("click", () => {
-        const expanded = toggle.getAttribute("aria-expanded") === "true";
-        toggle.setAttribute("aria-expanded", String(!expanded));
-        toggle.classList.toggle("active");
-        nav.classList.toggle("open");
-    });
-
-    nav.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", () => {
-            toggle.setAttribute("aria-expanded", "false");
-            toggle.classList.remove("active");
-            nav.classList.remove("open");
-        });
     });
 }
