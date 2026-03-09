@@ -199,6 +199,19 @@ function initBookViewer(sharedPages = []) {
                 { threshold: 0.05, rootMargin: "200px" }
             );
 
+            // Cover image first
+            const coverImg = document.createElement("img");
+            coverImg.src = "cover.png";
+            coverImg.alt = "Cover";
+            coverImg.style.cssText = "width:60%;max-width:320px;display:block;margin:0 auto 0;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,0.5);";
+            coverImg.classList.add("mobile-visible");
+            mobileGrid.appendChild(coverImg);
+
+            // Spacer
+            const spacer = document.createElement("div");
+            spacer.style.cssText = "height:48px;";
+            mobileGrid.appendChild(spacer);
+
             mobileTotal = pages.length - 1;
             updateProgress();
 
