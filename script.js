@@ -199,10 +199,10 @@ function initBookViewer(sharedPages = []) {
                 { threshold: 0.05, rootMargin: "200px" }
             );
 
-            mobileTotal = pages.length;
+            mobileTotal = pages.length - 2;
             updateProgress();
 
-            pages.forEach(page => {
+            pages.slice(2).forEach(page => {
                 const wrapper = document.createElement("div");
                 wrapper.style.cssText = "width:100%;overflow:hidden;";
                 const img = document.createElement("img");
