@@ -140,25 +140,30 @@ function initBookViewer(sharedPages = []) {
                 const check = () => {
                     try {
                         const canvas = document.createElement("canvas");
-                        const size = 20;
+                        const size = 30;
                         canvas.width = size;
                         canvas.height = size;
                         const ctx = canvas.getContext("2d");
                         ctx.drawImage(img, 0, 0, size, size);
                         const data = ctx.getImageData(0, 0, size, size).data;
                         let whiteCount = 0;
+                        const total = size * size;
                         for (let i = 0; i < data.length; i += 4) {
-                            if (data[i] > 240 && data[i + 1] > 240 && data[i + 2] > 240) {
+                            if (data[i] > 235 && data[i + 1] > 235 && data[i + 2] > 235) {
                                 whiteCount++;
                             }
                         }
-                        resolve(whiteCount / (size * size) > 0.92);
+                        resolve(whiteCount / total > 0.88);
                     } catch (e) {
                         resolve(false);
                     }
                 };
-                if (img.complete && img.naturalWidth) check();
-                else img.onload = check;
+                if (img.complete && img.naturalWidth > 0) {
+                    check();
+                } else {
+                    img.onload = check;
+                    img.onerror = () => resolve(false);
+                }
             });
         };
 
@@ -170,7 +175,7 @@ function initBookViewer(sharedPages = []) {
             if (!progressEl) return;
             progressEl.textContent = mobileLoaded + " / " + mobileTotal;
             if (mobileLoaded >= mobileTotal) {
-                setTimeout(() => { if (progressEl) progressEl.style.opacity = "0"; }, 1500);
+                setTimeout(() => { if (progressEl) progressEl.style.opacity = "0"; }, 1200);
             }
         };
 
@@ -191,23 +196,27 @@ function initBookViewer(sharedPages = []) {
                         }
                     });
                 },
-                { threshold: 0.1 }
+                { threshold: 0.05, rootMargin: "200px" }
             );
 
             mobileTotal = pages.length;
             updateProgress();
 
             pages.forEach(page => {
+                const wrapper = document.createElement("div");
+                wrapper.style.cssText = "width:100%;overflow:hidden;";
                 const img = document.createElement("img");
                 img.alt = page.alt;
                 img.loading = "lazy";
                 img.decoding = "async";
+                img.style.cssText = "width:100%;display:block;max-width:100vw;";
                 img.src = page.src;
-                mobileGrid.appendChild(img);
+                wrapper.appendChild(img);
+                mobileGrid.appendChild(wrapper);
 
                 isWhiteImage(img).then(isWhite => {
                     if (isWhite) {
-                        img.remove();
+                        wrapper.remove();
                         mobileTotal--;
                     } else {
                         mobileObserver.observe(img);
