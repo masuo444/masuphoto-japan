@@ -436,27 +436,48 @@ section {
 }
 
 .mobile-gallery {
-    margin: clamp(40px, 6vw, 80px) auto 0;
-    max-width: 860px;
-}
-
-.mobile-gallery-lead {
-    text-align: center;
-    margin: 0 0 1.5rem;
-    font-size: 0.9rem;
-    opacity: 0.65;
-    letter-spacing: 0.06em;
+    margin: 0 auto;
+    max-width: 100%;
+    padding: 0 16px;
 }
 
 .book-mobile-grid {
-    display: grid;
-    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
 }
 
 .book-mobile-grid img {
     width: 100%;
-    border-radius: 18px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    display: block;
+    border-radius: 0;
+    box-shadow: none;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.book-mobile-grid img.mobile-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mobile-progress {
+    position: fixed;
+    bottom: 20px;
+    right: 16px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    color: rgba(245, 241, 230, 0.8);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 50;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 }
 
 @media (max-width: 900px) {
@@ -466,6 +487,36 @@ section {
 
     .mobile-only {
         display: block;
+    }
+
+    body {
+        overflow-x: hidden;
+    }
+
+    .book-viewer {
+        padding: 0;
+        background: var(--background);
+    }
+
+    .book-header {
+        padding: clamp(60px, 10vw, 100px) 20px clamp(16px, 3vw, 30px);
+    }
+
+    .book-header h1 {
+        font-size: clamp(18px, 4.5vw, 28px);
+    }
+
+    .book-thumbs {
+        display: none;
+    }
+
+    .page-header {
+        padding: 16px 20px;
+    }
+
+    .page-nav {
+        gap: 12px;
+        font-size: 11px;
     }
 }
 

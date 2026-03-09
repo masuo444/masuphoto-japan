@@ -135,18 +135,87 @@ function initBookViewer(sharedPages = []) {
         const mobileMedia = typeof window.matchMedia === "function" ? window.matchMedia("(max-width: 900px)") : null;
         let mobileGridPopulated = false;
 
+        const isWhiteImage = (img) => {
+            return new Promise(resolve => {
+                const check = () => {
+                    try {
+                        const canvas = document.createElement("canvas");
+                        const size = 20;
+                        canvas.width = size;
+                        canvas.height = size;
+                        const ctx = canvas.getContext("2d");
+                        ctx.drawImage(img, 0, 0, size, size);
+                        const data = ctx.getImageData(0, 0, size, size).data;
+                        let whiteCount = 0;
+                        for (let i = 0; i < data.length; i += 4) {
+                            if (data[i] > 240 && data[i + 1] > 240 && data[i + 2] > 240) {
+                                whiteCount++;
+                            }
+                        }
+                        resolve(whiteCount / (size * size) > 0.92);
+                    } catch (e) {
+                        resolve(false);
+                    }
+                };
+                if (img.complete && img.naturalWidth) check();
+                else img.onload = check;
+            });
+        };
+
+        let mobileTotal = 0;
+        let mobileLoaded = 0;
+        let progressEl = null;
+
+        const updateProgress = () => {
+            if (!progressEl) return;
+            progressEl.textContent = mobileLoaded + " / " + mobileTotal;
+            if (mobileLoaded >= mobileTotal) {
+                setTimeout(() => { if (progressEl) progressEl.style.opacity = "0"; }, 1500);
+            }
+        };
+
         const populateMobileGrid = () => {
             if (!mobileGrid || mobileGridPopulated) return;
-            const fragment = document.createDocumentFragment();
-            pages.forEach((page, idx) => {
-                const img = document.createElement("img");
-                img.src = page.src;
-                img.alt = page.alt || `MASU PHOTO Japan ${idx + 1}`;
-                img.loading = "lazy";
-                fragment.appendChild(img);
-            });
-            mobileGrid.appendChild(fragment);
             mobileGridPopulated = true;
+
+            progressEl = document.createElement("div");
+            progressEl.className = "mobile-progress";
+            document.body.appendChild(progressEl);
+
+            const mobileObserver = new IntersectionObserver(
+                entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add("mobile-visible");
+                            mobileObserver.unobserve(entry.target);
+                        }
+                    });
+                },
+                { threshold: 0.1 }
+            );
+
+            mobileTotal = pages.length;
+            updateProgress();
+
+            pages.forEach(page => {
+                const img = document.createElement("img");
+                img.alt = page.alt;
+                img.loading = "lazy";
+                img.decoding = "async";
+                img.src = page.src;
+                mobileGrid.appendChild(img);
+
+                isWhiteImage(img).then(isWhite => {
+                    if (isWhite) {
+                        img.remove();
+                        mobileTotal--;
+                    } else {
+                        mobileObserver.observe(img);
+                    }
+                    mobileLoaded++;
+                    updateProgress();
+                });
+            });
         };
 
         const handleMobileChange = event => {
