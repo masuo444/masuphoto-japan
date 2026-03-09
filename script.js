@@ -203,13 +203,13 @@ function initBookViewer(sharedPages = []) {
             const coverImg = document.createElement("img");
             coverImg.src = "cover.png";
             coverImg.alt = "Cover";
-            coverImg.style.cssText = "width:60%;max-width:320px;display:block;margin:0 auto 0;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,0.5);";
+            coverImg.style.cssText = "width:100%;display:block;";
             coverImg.classList.add("mobile-visible");
             mobileGrid.appendChild(coverImg);
 
             // Spacer
             const spacer = document.createElement("div");
-            spacer.style.cssText = "height:48px;";
+            spacer.style.cssText = "height:24px;";
             mobileGrid.appendChild(spacer);
 
             mobileTotal = pages.length - 1;
