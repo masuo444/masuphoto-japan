@@ -906,13 +906,15 @@ section {
 }
 
 @media (max-width: 720px) {
-    /* このサイトのみナビ5項目（Gallery有り）。モバイルで1行に収めるため字間と間隔を詰める */
+    /* このサイトのみナビ5項目（Gallery有り）。モバイルで1行に収めるため
+       文字を1px小さくする。他11サイトと同じ約30pxの余裕を確保できる。 */
     .page-nav {
         gap: 8px;
+        font-size: 10px;
     }
 
     .page-nav a {
-        letter-spacing: 0.16em;
+        letter-spacing: 0.18em;
     }
 
     .footer-archive {
@@ -1054,5 +1056,13 @@ section {
         margin-top: 10px;
         font-size: 11px;
         letter-spacing: 0.16em;
+    }
+}
+
+/* 狭い端末（360px級Android等）でナビを1行に保つため、ヘッダーの左右余白だけ詰める */
+@media (max-width: 400px) {
+    .page-header {
+        padding-left: 14px;
+        padding-right: 14px;
     }
 }
