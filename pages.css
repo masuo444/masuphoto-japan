@@ -1084,3 +1084,10 @@ section {
     color: var(--gold);
     border-color: var(--gold);
 }
+
+/* CLS対策: 写真集ページは全て同一比率。JSで生成される<img>にも効くようCSSで指定する */
+.book-mobile-grid img,
+.book-thumbs img {
+    aspect-ratio: 800 / 1100;
+    height: auto;
+}
